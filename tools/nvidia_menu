@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Define variables
+local_dir=~/.local/share/applications
+
+desk_dir=~/.local/share/desktop-directories
+menu_dir=~/.config/menus/applications-merged
+
+desk_file=$desk_dir/nvidia.directory
+menu_file=$menu_dir/nvidia.menu
+
+
+# Verify if exist directories
+
+[ ! -d "$local_dir" ] && {
+	echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $local_dir not found! \e[32mCreate directory $local_dir \e[m"
+	mkdir -p $local_dir
+}
+
+[ ! -d "$desk_dir"  ] && {
+	echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $desk_dir not found! \e[32mCreate directory $desk_dir \e[m"
+	mkdir -p $desk_dir
+}
+
+[ ! -d "$menu_dir"  ] && {
+	echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $menu_dir not found! \e[32mCreate directory $menu_dir \e[m"
+	mkdir -p $menu_dir
+}
+
+
+# Create nvidia.directory
+
+[ ! -f "$desk_file" ] && {
+	echo -e "\e[32mCreate file $desk_file \e[m"
+	echo "[Desktop Entry]
+Version=1.0
+Type=Directory
+Name=Nvidia
+Icon=l-nvidia" > $desk_file
+}
+
+
+# Create nvidia.menu
+
+[ ! -f "$menu_file" ] && {
+	echo -e "\e[32mCreate file $menu_file \e[m"
+	echo '<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+    "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<!-- Do not edit manually - generated and managed by xdg-desktop-menu -->
+<Menu>
+	<Name>Applications</Name>
+	<Menu>
+		<Name>Nvidia</Name>
+		<Directory>nvidia.directory</Directory>
+		<Include>
+			<Filename>l-nvidia.desktop</Filename>
+		</Include>
+	</Menu>
+</Menu>' > $menu_file
+}
