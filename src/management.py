@@ -128,7 +128,7 @@ def launch(lab, lst):
         print("Executando: " + command)
         sh.call(command, shell=True)
     except ValueError as msg:
-        log.warning("\033[33m %s \033[32m", msg)
+        log.warning("\033[33m %s \033[m", msg)
 
 
 # Function for add button

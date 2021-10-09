@@ -15,7 +15,7 @@ import utils
 def check_for_updates():
     print("\033[33mChecking updates...\033[m")
     try:
-        res = requests.get("https://raw.githubusercontent.com/mxnt10/launcher-nvidia/main/RELEASE")
+        res = requests.get("https://raw.githubusercontent.com/mxnt10/launcher-nvidia/master/RELEASE")
 
         if res.status_code != 200:
             raise ValueError('Connection fail, ' + str(res.status_code))
