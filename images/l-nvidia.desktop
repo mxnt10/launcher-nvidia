@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Launcher Nvidia
+Comment=Nvidia tool for hybrid Notebooks, Nvidia + Intel
+Exec=l-nvidia
+Icon=l-nvidia
+Terminal=false
+Categories=Nvidia;
