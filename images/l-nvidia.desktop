@@ -1,9 +1,11 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
+GenericName=Launcher Nvidia
 Name=Launcher Nvidia
 Comment=Nvidia tool for hybrid Notebooks, Nvidia + Intel
 Exec=l-nvidia
 Icon=l-nvidia
 Terminal=false
-Categories=Nvidia;
+Categories=Nvidia;Utility;Settings;DesktopSettings;LXQt;X-XFCE-SettingsDialog;X-XFCE-PersonalSettings;X-GNOME-PersonalSettings;
+X-KDE-StartupNotify=false

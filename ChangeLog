@@ -1,0 +1,32 @@
+# ChangeLog
+All notable changes to this project will be documented in this file.
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+
+
+## [ 1.1 ] - 2021-10-09 #############################################
+
+### Changed / Modificado
+	- install.sh
+	- Desktop file.
+###
+
+### Fixed / Corrigido
+	- Fix update verification.
+###
+
+#####################################################################
+
+
+## [ 1.0 ] - 2021-10-08 #############################################
+
+### Added / Adicionado
+	- Add Desktop file in images.
+	- Add icon in images.
+	- Add tools for update desktop database and create menu Nvidia
+	  in Start Menu.
+	- Add sources.
+	- Add script in profile.
+	- Add install.sh
+###
+
+#####################################################################
