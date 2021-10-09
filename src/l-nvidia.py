@@ -4,7 +4,7 @@
 import tkinter as tk
 import management as mg
 import menubar_help as hl
-# import menubar_options as op
+import menubar_options as op
 import utils as ut
 
 # Config Interface
@@ -13,7 +13,7 @@ main_app.minsize(600, 400)
 main_app.wait_visibility(main_app)
 main_app.attributes('-alpha', 0.0)
 ut.center(main_app)
-main_app.title("Launcher NVIDIA v1.0 - By MXNT10")
+main_app.title("Launcher NVIDIA - By MXNT10")
 ut.set_icon(main_app)
 
 # Menubar
@@ -27,7 +27,7 @@ menu_bar.add_cascade(label="General", menu=menu_program)
 
 # Options menu
 menu_options = tk.Menu(menu_bar, tearoff=0)
-# menu_options.add_command(label="Reset List", command=lambda: op.preferencies(main_app))
+menu_options.add_command(label="Update List", command=lambda: op.update_list(listbox))
 # menu_options.add_command(label="Preferences", command=lambda: op.preferencies(main_app))
 menu_bar.add_cascade(label="Options", menu=menu_options)
 

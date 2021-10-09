@@ -21,7 +21,7 @@ def check_for_updates():
             raise ValueError('Connection fail, ' + str(res.status_code))
 
         new_ver = res.text.split("\n")
-        cur_ver = "1.0"
+        cur_ver = "1.2"
 
         if new_ver[0] == cur_ver:
             print("\033[32mProgram already updated.\033[m")
@@ -41,10 +41,11 @@ def about(main):
 
     # Config Interface
     help_app = tk.Toplevel()
+    help_app.wait_visibility(help_app)
     help_app.attributes('-alpha', 0.0)
     help_app.minsize(400, 200)
     utils.center(help_app)
-    help_app.title("Launcher NVIDIA v1.0 - About")
+    help_app.title("Launcher NVIDIA - About")
     help_app.resizable(False, False)
 
     # Focuses on the window and avoids clicking on the main window
@@ -54,7 +55,7 @@ def about(main):
 
     # Text Info
     tk.Label(help_app, text="Launcher NVIDIA", font=12).place(x=10, y=10)
-    tk.Label(help_app, text="Version 1.0").place(x=150, y=14)
+    tk.Label(help_app, text="Version 1.2").place(x=150, y=14)
     tk.Label(help_app, text="Utility created to facilitate running programs and games on").place(x=10, y=50)
     tk.Label(help_app, text="linux distributions such as Slackware.").place(x=10, y=65)
     tk.Label(help_app, text="Maintainer: Mauricio Ferrari").place(x=10, y=100)

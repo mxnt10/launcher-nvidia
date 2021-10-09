@@ -125,9 +125,8 @@ def launch(lab, lst):
         command = extract_command(text)
         if not command:
             raise ValueError("Command not selected!")
-        print("\033[32mExecutando: \033[36m" + command + "\033[0;1m")
+        print("\033[32mExecutando: \033[36m" + command + "\033[m")
         sh.call(command, shell=True)
-        print("\033[m", end='')
     except ValueError as msg:
         log.warning("\033[33m %s \033[m", msg)
 
