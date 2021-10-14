@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import tkinter as tk
+# Import modules
 import logging as log
 
 
 # Search word in text file.
-
 def search_word(file, txt):
     with open(file, 'r', encoding='utf8') as a:
         for line in a:
@@ -17,7 +16,6 @@ def search_word(file, txt):
 
 
 # Close interface
-
 def close_win(win):
     # :param win: the main window or Toplevel window to close
     print("\033[34mClosing interface!\033[m")
@@ -25,27 +23,25 @@ def close_win(win):
 
 
 # Define application icon
-
-def set_icon(win):
-    # :param win: the main window or Toplevel window to define icon
-
+def set_icon():
     icon = "/usr/share/pixmaps/l-nvidia.png"
-    l_icon = "../images/l-nvidia.png"
+    l_icon = "../appdata/l-nvidia.png"
 
     try:
-        with open(icon, 'r'):
-            win.iconphoto(True, tk.PhotoImage(file=icon))
+        with open(icon):
+            return icon
     except Exception as msg:
         log.warning("\033[33m%s.\033[32m Use a local icon...\033[m", msg)
         try:
-            win.iconphoto(True, tk.PhotoImage(file=l_icon))
+            with open(l_icon):
+                return l_icon
         except Exception as msg:
             # Exception for icon not found
-            log.warning("\033[31m%s\033[m", msg)
+            log.error("\033[31m%s\033[m", msg)
+            return None
 
 
 # Open application in screen center
-
 def center(win):
     # :param win: the main window or Toplevel window to center
 
@@ -73,3 +69,10 @@ def center(win):
     # This seems to draw the window frame immediately, so only call deiconify()
     # after setting correct window position
     win.deiconify()
+
+
+# View info in terminal
+def info_log(msg):
+    logg = log.getLogger('root')
+    logg.setLevel(log.INFO)
+    logg.info('\033[32m %s \033[m', msg)

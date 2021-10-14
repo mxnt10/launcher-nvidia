@@ -3,6 +3,48 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.3 ] - 2021-10-12 #############################################
+
+### Added / Adicionado
+ - Code:
+	- Added translation support.
+	- Added options for systray.
+	- Added Preferences in menu.
+ - Sources:
+	- Added sources version.py, settings.py and translate.py
+	- Added source messagebox.py, fork in the tkinter module
+	  messagebox. 
+	- Included and changed modules for tray icon support.
+ - Directory:
+	- Included tools files in commom directoties.
+	- included locale folder for generate a .pot, .po and .mo files
+	  for program translation.
+###
+
+### Changed / Modificado
+ - Code:
+	- Changed update verification.
+	- Changed methods for close application.
+ - Sources:
+	- Rename source menubar_help.py to help.py
+	- Rename source menubar_options.py to options.py
+	- Use internal module messagebox for show messages in
+	  the application.
+ - Directory:
+	- Rename images to appdata.
+	- Rename tools to utils.
+###
+
+### Fixed / Corrigido
+	- Fixed attributes for tkinter.
+	- Fixed About window for not minimize.
+	- Fixed Preferences window for not minimize.
+	- Messages not as necessary minimize. 
+###
+
+#####################################################################
+
+
 ## [ 1.2 ] - 2021-10-09 #############################################
 
 ### Added / Adicionado

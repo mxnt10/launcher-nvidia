@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cp -T ../locale/l-nvidia.pot ../locale/pt_BR/LC_MESSAGES/l-nvidia.po
+
+cd ../locale/pt_BR/LC_MESSAGES
+
+python3 ../../../commom/msgfmt.py -o l-nvidia.mo l-nvidia
