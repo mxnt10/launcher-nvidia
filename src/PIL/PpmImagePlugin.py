@@ -111,6 +111,7 @@ class PpmImageFile(ImageFile.ImageFile):
                         self.mode = "I"
                         rawmode = "I;32B"
 
+        # noinspection PyUnboundLocalVariable
         self._size = xsize, ysize
         self.tile = [("raw", (0, 0, xsize, ysize), self.fp.tell(), (rawmode, 0, 1))]
 
@@ -145,6 +146,7 @@ def _save(im, fp):
             fp.write(b"65535\n")
         elif rawmode == "I;32B":
             fp.write(b"2147483648\n")
+    # noinspection PyProtectedMember
     ImageFile._save(im, fp, [("raw", (0, 0) + im.size, 0, (rawmode, 0, 1))])
 
     # ALTERNATIVE: save via builtin debug function

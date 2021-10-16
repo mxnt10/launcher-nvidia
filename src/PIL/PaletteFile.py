@@ -46,6 +46,7 @@ class PaletteFile:
             if 0 <= i <= 255:
                 self.palette[i] = o8(r) + o8(g) + o8(b)
 
+        # noinspection PyTypeChecker
         self.palette = b"".join(self.palette)
 
     def getpalette(self):

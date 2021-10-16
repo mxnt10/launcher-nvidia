@@ -18,7 +18,6 @@
 #
 
 import re
-
 from . import Image
 
 
@@ -66,10 +65,12 @@ def getrgb(color):
             int(color[7:9], 16),
         )
 
+    # noinspection RegExpAnonymousGroup
     m = re.match(r"rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", color)
     if m:
         return int(m.group(1)), int(m.group(2)), int(m.group(3))
 
+    # noinspection RegExpAnonymousGroup
     m = re.match(r"rgb\(\s*(\d+)%\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$", color)
     if m:
         return (
@@ -78,6 +79,7 @@ def getrgb(color):
             int((int(m.group(3)) * 255) / 100.0 + 0.5),
         )
 
+    # noinspection RegExpAnonymousGroup
     m = re.match(
         r"hsl\(\s*(\d+\.?\d*)\s*,\s*(\d+\.?\d*)%\s*,\s*(\d+\.?\d*)%\s*\)$", color
     )
@@ -95,6 +97,7 @@ def getrgb(color):
             int(rgb[2] * 255 + 0.5),
         )
 
+    # noinspection RegExpAnonymousGroup
     m = re.match(
         r"hs[bv]\(\s*(\d+\.?\d*)\s*,\s*(\d+\.?\d*)%\s*,\s*(\d+\.?\d*)%\s*\)$", color
     )
@@ -112,12 +115,14 @@ def getrgb(color):
             int(rgb[2] * 255 + 0.5),
         )
 
+    # noinspection RegExpAnonymousGroup
     m = re.match(r"rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", color)
     if m:
         return int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
     raise ValueError(f"unknown color specifier: {repr(color)}")
 
 
+# noinspection PyIncorrectDocstring
 def getcolor(color, mode):
     """
     Same as :py:func:`~PIL.ImageColor.getrgb`, but converts the RGB value to a

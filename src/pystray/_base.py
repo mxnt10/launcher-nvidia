@@ -187,6 +187,7 @@ class Icon(object):
             else:
                 self.visible = True
 
+        # noinspection PyAttributeOutsideInit
         self._setup_thread = threading.Thread(target=setup_handler)
         self._setup_thread.start()
         self._run()
@@ -261,6 +262,8 @@ class Icon(object):
 
         :return: a wrapped callback
         """
+
+        # noinspection PyUnusedLocal
         @functools.wraps(callback)
         def inner(*args, **kwargs):
             try:
@@ -434,7 +437,8 @@ class MenuItem(object):
         """
         return self._action if isinstance(self._action, Menu) else None
 
-    def _assert_action(self, action):
+    @staticmethod
+    def _assert_action(action):
         """Ensures that a callable can be called with the expected number of
         arguments.
 
@@ -458,12 +462,14 @@ class MenuItem(object):
                 1 if inspect.ismethod(action) else 0)
 
             if argcount == 0:
+                # noinspection PyUnusedLocal
                 @functools.wraps(action)
                 def wrapper0(*args):
                     return action()
                 return wrapper0
 
             elif argcount == 1:
+                # noinspection PyUnusedLocal
                 @functools.wraps(action)
                 def wrapper1(icon, *args):
                     return action(icon)
@@ -475,7 +481,8 @@ class MenuItem(object):
             else:
                 raise ValueError(action)
 
-    def _assert_callable(self, value, default):
+    @staticmethod
+    def _assert_callable(value, default):
         """Asserts that a value is callable.
 
         If the value is a callable, it will be returned. If the value is
@@ -496,7 +503,8 @@ class MenuItem(object):
         else:
             raise ValueError(value)
 
-    def _wrap(self, value):
+    @staticmethod
+    def _wrap(value):
         """Wraps a value in a callable.
 
         If the value already is a callable, it is returned unmodified

@@ -87,6 +87,7 @@ MSG_INFO = _('The program is already on the list!')
 LANGUAGE = _('Language:')
 THEME = _('Theme:')
 SYSTRAY_TXT = _('Close program to system tray.')
+SPLASH_TXT = _('Enable splash screen.')
 DEFAULT = _('Default')
 PORTUGUESE = _('Portuguese')
 

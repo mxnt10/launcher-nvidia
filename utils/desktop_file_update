@@ -2,15 +2,14 @@
 
 echo -e "\e[34mUpdate desktop database...\e[m"
 [ -x /usr/bin/update-desktop-database ] && {
-	/usr/bin/update-desktop-database -q usr/share/applications 2>&1 >&-
-	/usr/bin/update-desktop-database ~/.local/share/applications 2>&1 >&-
-
+  /usr/bin/update-desktop-database -q usr/share/applications 2>&1 >&-
+  /usr/bin/update-desktop-database ~/.local/share/applications 2>&1 >&-
 }
 
 echo -e "\e[34mUpdate icon cache...\e[m"
 [ -e usr/share/icons/hicolor/icon-theme.cache ] && {
-	[ -x /usr/bin/gtk-update-icon-cache ] && {
-		/usr/bin/gtk-update-icon-cache usr/share/icons/hicolor 2>&1 >&-
-		/usr/bin/gtk-update-icon-cache usr/share/pixmaps 2>&1 >&-
-	}
+  [ -x /usr/bin/gtk-update-icon-cache ] && {
+    /usr/bin/gtk-update-icon-cache usr/share/icons/hicolor 2>&1 >&-
+    /usr/bin/gtk-update-icon-cache usr/share/pixmaps 2>&1 >&-
+  }
 }

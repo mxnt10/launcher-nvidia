@@ -34,9 +34,7 @@ PATH = '/org/freedesktop/Notifications'
 
 class Notifier(object):
     def __init__(self):
-        self._connection = Gio.bus_get_sync(
-            Gio.BusType.SESSION,
-            None)
+        self._connection = Gio.bus_get_sync(Gio.BusType.SESSION)
         self._notify = Gio.DBusProxy.new_sync(
             self._connection,
             0,
@@ -52,10 +50,10 @@ class Notifier(object):
 
         @atexit.register
         def cleanup():
+            # noinspection PyBroadException
             try:
                 os.unlink(icon_path)
-            except:
-                # Ignore any error
+            except Exception:
                 pass
 
     def notify(self, title, message, icon):

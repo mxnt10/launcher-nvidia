@@ -19,13 +19,14 @@ import functools
 import os
 import signal
 import tempfile
+from abc import ABC
 
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib, GObject, Gtk
 
 from . import _base
-from . import _notify_dbus
+from . import notify_dbus
 
 
 def mainloop(f):
@@ -37,6 +38,7 @@ def mainloop(f):
     """
     @functools.wraps(f)
     def inner(*args, **kwargs):
+        # noinspection PyShadowingNames
         def callback(*args, **kwargs):
             """A callback that executes  ``f`` and then returns ``False``.
             """
@@ -51,7 +53,7 @@ def mainloop(f):
     return inner
 
 
-class GtkIcon(_base.Icon):
+class GtkIcon(_base.Icon, ABC):
     def __init__(self, *args, **kwargs):
         super(GtkIcon, self).__init__(*args, **kwargs)
         self._loop = None
@@ -59,15 +61,17 @@ class GtkIcon(_base.Icon):
         self._notifier = None
 
     def _run(self):
+        # noinspection PyArgumentList
         self._loop = GLib.MainLoop.new(None, False)
-        self._notifier = _notify_dbus.Notifier()
+        self._notifier = notify_dbus.Notifier()
         self._mark_ready()
 
         # Make sure that we do not inhibit ctrl+c
         signal.signal(signal.SIGINT, signal.SIG_DFL)
+        # noinspection PyBroadException
         try:
             self._loop.run()
-        except:
+        except Exception:
             self._log.error(
                 'An error occurred in the main loop', exc_info=True)
         finally:
@@ -97,6 +101,7 @@ class GtkIcon(_base.Icon):
             return None
 
         else:
+            # noinspection PyArgumentList
             menu = Gtk.Menu.new()
             for descriptor in descriptors:
                 menu.append(self._create_menu_item(descriptor))
@@ -117,10 +122,12 @@ class GtkIcon(_base.Icon):
 
         else:
             if descriptor.checked is not None:
+                # noinspection PyArgumentList
                 menu_item = Gtk.CheckMenuItem.new_with_label(descriptor.text)
                 menu_item.set_active(descriptor.checked)
                 menu_item.set_draw_as_radio(descriptor.radio)
             else:
+                # noinspection PyArgumentList
                 menu_item = Gtk.MenuItem.new_with_label(descriptor.text)
             if descriptor.submenu:
                 menu_item.set_submenu(self._create_menu(descriptor.submenu))
@@ -139,11 +146,12 @@ class GtkIcon(_base.Icon):
     def _remove_fs_icon(self):
         """Removes the temporary file used for the icon.
         """
+        # noinspection PyBroadException
         try:
             if self._icon_path:
                 os.unlink(self._icon_path)
                 self._icon_path = None
-        except:
+        except Exception:
             pass
         self._icon_valid = False
 

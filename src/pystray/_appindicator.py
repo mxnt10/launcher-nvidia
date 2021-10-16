@@ -22,7 +22,7 @@ from gi.repository import Gtk
 gi.require_version('AppIndicator3', '0.1')
 from gi.repository import AppIndicator3 as AppIndicator
 
-from ._gtk import GtkIcon, mainloop
+from .gtk import GtkIcon, mainloop
 from . import _base
 
 
@@ -39,6 +39,7 @@ class Icon(GtkIcon):
         if self.icon:
             self._update_icon()
 
+    # noinspection PyArgumentList
     @mainloop
     def _show(self):
         self._appindicator = AppIndicator.Indicator.new(
@@ -78,6 +79,7 @@ class Icon(GtkIcon):
         super(Icon, self)._finalize()
         del self._appindicator
 
+    # noinspection PyArgumentList
     def _create_default_menu(self):
         """Creates a :class:`Gtk.Menu` from the default menu entry.
 

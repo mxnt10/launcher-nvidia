@@ -49,9 +49,7 @@ except ImportError:
 # Use __version__ instead.
 from . import (
     ImageMode,
-    TiffTags,
     UnidentifiedImageError,
-    __version__,
     _plugins,
 )
 from ._binary import i32le
@@ -60,28 +58,18 @@ from ._util import deferred_error, isPath
 if sys.version_info >= (3, 7):
 
     def __getattr__(name):
-        if name == "PILLOW_VERSION":
-            return __version__
-        else:
-            categories = {"NORMAL": 0, "SEQUENCE": 1, "CONTAINER": 2}
-            if name in categories:
-                warnings.warn(
-                    "Image categories are deprecated and will be removed in Pillow 10 "
-                    "(2023-01-02). Use is_animated instead.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                return categories[name]
+        categories = {"NORMAL": 0, "SEQUENCE": 1, "CONTAINER": 2}
+        if name in categories:
+            warnings.warn(
+                "Image categories are deprecated and will be removed in Pillow 10 "
+                "(2023-01-02). Use is_animated instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            return categories[name]
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-
 else:
-
-    from . import PILLOW_VERSION
-
-    # Silence warning
-    assert PILLOW_VERSION
-
     # categories
     NORMAL = 0
     SEQUENCE = 1
@@ -108,13 +96,6 @@ try:
     # Also note that Image.core is not a publicly documented interface,
     # and should be considered private and subject to change.
     from . import _imaging as core
-
-    if __version__ != getattr(core, "PILLOW_VERSION", None):
-        raise ImportError(
-            "The _imaging extension was built for another version of Pillow or PIL:\n"
-            f"Core version: {getattr(core, 'PILLOW_VERSION', None)}\n"
-            f"Pillow version: {__version__}"
-        )
 
 except ImportError as v:
     core = deferred_error(ImportError("The _imaging C module is not installed."))
@@ -177,6 +158,7 @@ QUAD = 3
 MESH = 4
 
 # resampling filters (also defined in Imaging.h)
+# noinspection PyRedeclaration
 NEAREST = NONE = 0
 BOX = 4
 BILINEAR = LINEAR = 2
@@ -187,6 +169,7 @@ LANCZOS = ANTIALIAS = 1
 _filters_support = {BOX: 0.5, BILINEAR: 1.0, HAMMING: 1.0, BICUBIC: 2.0, LANCZOS: 3.0}
 
 # dithers
+# noinspection PyRedeclaration
 NEAREST = NONE = 0
 ORDERED = 1  # Not yet implemented
 RASTERIZE = 2  # Not yet implemented
@@ -337,43 +320,13 @@ def preinit():
     global _initialized
     if _initialized >= 1:
         return
-
     try:
-        from . import BmpImagePlugin
-
-        assert BmpImagePlugin
-    except ImportError:
-        pass
-    try:
-        from . import GifImagePlugin
-
-        assert GifImagePlugin
-    except ImportError:
-        pass
-    try:
-        from . import JpegImagePlugin
-
-        assert JpegImagePlugin
-    except ImportError:
-        pass
-    try:
-        from . import PpmImagePlugin
-
-        assert PpmImagePlugin
-    except ImportError:
-        pass
-    try:
+        # noinspection PyUnresolvedReferences
         from . import PngImagePlugin
 
         assert PngImagePlugin
     except ImportError:
         pass
-    # try:
-    #     import TiffImagePlugin
-    #     assert TiffImagePlugin
-    # except ImportError:
-    #     pass
-
     _initialized = 1
 
 
@@ -513,8 +466,6 @@ class Image:
     _close_exclusive_fp_after_loading = True
 
     def __init__(self):
-        # FIX: take "new" parameters / other image?
-        # FIX: turn mode and size into delegating properties?
         self.im = None
         self.mode = ""
         self._size = (0, 0)
@@ -673,9 +624,6 @@ class Image:
         return b.getvalue()
 
     def __array__(self, dtype=None):
-        # numpy array interface support
-        # import numpy as np
-
         new = {}
         shape, typestr = _conv_type_shape(self)
         new["shape"] = shape
@@ -690,8 +638,6 @@ class Image:
 
         class ArrayData:
             __array_interface__ = new
-
-        # return np.array(ArrayData(), dtype)
 
     def __getstate__(self):
         return [self.info, self.mode, self.size, self.getpalette(), self.tobytes()]
@@ -841,11 +787,6 @@ class Image:
 
         if self.im:
             if cffi and USE_CFFI_ACCESS:
-                if self.pyaccess:
-                    return self.pyaccess
-                from . import PyAccess
-
-                self.pyaccess = PyAccess.new(self, self.readonly)
                 if self.pyaccess:
                     return self.pyaccess
             return self.im.pixel_access(self.readonly)
@@ -1210,32 +1151,25 @@ class Image:
         self.load()
         return self._new(self.im.expand(xmargin, ymargin, 0))
 
-    def filter(self, filtr):
+    def filter(self, filter):
         """
         Filters this image using the given filter.  For a list of
         available filters, see the :py:mod:`~PIL.ImageFilter` module.
 
-        :param filtr: Filter kernel.
+        :param filter: Filter kernel.
         :returns: An :py:class:`~PIL.Image.Image` object."""
-
-        # from . import ImageFilter
-
         self.load()
 
-        if isinstance(filtr, Callable):
-            filtr = filtr()
-        if not hasattr(filtr, "filter"):
+        if isinstance(filter, Callable):
+            filter = filter()
+        if not hasattr(filter, "filter"):
             raise TypeError(
                 "filter argument should be ImageFilter.Filter instance or class"
             )
 
-        # multiband = isinstance(filter, ImageFilter.MultibandFilter)
-        # if self.im.bands == 1 or multiband:
-        #     return self._new(filter.filter(self.im))
-
         ims = []
         for c in range(self.im.bands):
-            ims.append(self._new(filtr.filter(self.im.getband(c))))
+            ims.append(self._new(filter.filter(self.im.getband(c))))
         return merge(self.mode, ims)
 
     def getbands(self):
@@ -1358,6 +1292,7 @@ class Image:
             warnings.warn("XMP data cannot be read without defusedxml dependency")
             return {}
         else:
+            # noinspection PyUnresolvedReferences
             root = ElementTree.fromstring(xmp_tags)
             return {get_name(root.tag): get_value(root)}
 
@@ -1381,6 +1316,7 @@ class Image:
         if 0x0112 not in self._exif:
             xmp_tags = self.info.get("XML:com.adobe.xmp")
             if xmp_tags:
+                # noinspection RegExpAnonymousGroup
                 match = re.search(r'tiff:Orientation="([0-9])"', xmp_tags)
                 if match:
                     self._exif[0x0112] = int(match[1])
@@ -1549,7 +1485,6 @@ class Image:
             elif isImageType(mask):
                 size = mask.size
             else:
-                # FIX: use self.size here?
                 raise ValueError("cannot determine region size; use 4-item box")
             box += (box[0] + size[0], box[1] + size[1])
 
@@ -1646,9 +1581,6 @@ class Image:
 
         self.load()
 
-        if isinstance(lut, ImagePointHandler):
-            return lut.point(self)
-
         if callable(lut):
             # if it isn't a list, it should be a function
             if self.mode in ("I", "I;16", "F"):
@@ -1661,7 +1593,6 @@ class Image:
             lut = [lut(i) for i in range(256)] * self.im.bands
 
         if self.mode == "F":
-            # FIX: _imaging returns a confusing error message for this case
             raise ValueError("point operation not supported for this mode")
 
         return self._new(self.im.point(lut, mode))
@@ -1979,8 +1910,10 @@ class Image:
                 reduce_box = self._get_safe_box(size, resample, box)
                 factor = (factor_x, factor_y)
                 if callable(self.reduce):
-                    self = self.reduce(factor, box=reduce_box)
+                    # noinspection PyMethodFirstArgAssignment
+                    self = self.reduce(factor)
                 else:
+                    # noinspection PyMethodFirstArgAssignment
                     self = Image.reduce(self, factor, box=reduce_box)
                 box = (
                     (box[0] - reduce_box[0]) / factor_x,
@@ -2097,7 +2030,6 @@ class Image:
         else:
             post_trans = translate
         if center is None:
-            # FIX These should be rounded to ints?
             rotn_center = (w / 2.0, h / 2.0)
         else:
             rotn_center = center
@@ -2112,8 +2044,8 @@ class Image:
             0.0,
         ]
 
-        def transform(x, y, mat):
-            (a, b, c, d, e, f) = mat
+        def transform(x, y, matrix):
+            (a, b, c, d, e, f) = matrix
             return a * x + b * y + c, d * x + e * y + f
 
         matrix[2], matrix[5] = transform(
@@ -2277,6 +2209,8 @@ class Image:
                 DeprecationWarning,
             )
 
+        _show(title=title, command=command)
+
     def split(self):
         """
         Split this image into individual bands. This method returns a
@@ -2388,8 +2322,10 @@ class Image:
 
         box = None
         if reducing_gap is not None:
+            # noinspection PyNoneFunctionAssignment
             res = self.draft(None, (size[0] * reducing_gap, size[1] * reducing_gap))
             if res is not None:
+                # noinspection PyUnresolvedReferences
                 box = res[1]
 
         if self.size != size:
@@ -2402,7 +2338,6 @@ class Image:
         self.readonly = 0
         self.pyaccess = None
 
-    # FIX: the different transform methods need further explanation
     # instead of bloating the method docs, add a separate chapter.
     def transform(
             self, size, method, data=None, resample=NEAREST, fill=1, fillcolor=None
@@ -2458,9 +2393,6 @@ class Image:
                     .transform(size, method, data, resample, fill, fillcolor)
                     .convert(self.mode)
             )
-
-        if isinstance(method, ImageTransformHandler):
-            return method.transform(size, self, resample=resample, fill=fill)
 
         if hasattr(method, "getdata"):
             # compatibility w. old-style transform objects
@@ -2579,7 +2511,9 @@ class Image:
         return self._new(self.im.effect_spread(distance))
 
 
+# --------------------------------------------------------------------
 # Abstract handlers.
+
 
 class ImagePointHandler:
     """
@@ -2820,29 +2754,18 @@ def fromarray(obj, mode=None):
     return frombuffer(mode, size, obj, "raw", rawmode, 0, 1)
 
 
-_fromarray_typemap = {
-    ((1, 1), "|b1"): ("1", "1;8"),
-    ((1, 1), "|u1"): ("L", "L"),
-    ((1, 1), "|i1"): ("I", "I;8"),
-    ((1, 1), "<u2"): ("I", "I;16"),
-    ((1, 1), ">u2"): ("I", "I;16B"),
-    ((1, 1), "<i2"): ("I", "I;16S"),
-    ((1, 1), ">i2"): ("I", "I;16BS"),
-    ((1, 1), "<u4"): ("I", "I;32"),
-    ((1, 1), ">u4"): ("I", "I;32B"),
-    ((1, 1), "<i4"): ("I", "I;32S"),
-    ((1, 1), ">i4"): ("I", "I;32BS"),
-    ((1, 1), "<f4"): ("F", "F;32F"),
-    ((1, 1), ">f4"): ("F", "F;32BF"),
-    ((1, 1), "<f8"): ("F", "F;64F"),
-    ((1, 1), ">f8"): ("F", "F;64BF"),
-    ((1, 1, 2), "|u1"): ("LA", "LA"),
-    ((1, 1, 3), "|u1"): ("RGB", "RGB"),
-    ((1, 1, 4), "|u1"): ("RGBA", "RGBA"),}
+_fromarray_typemap = {((1, 1), "|b1"): ("1", "1;8"), ((1, 1), "|u1"): ("L", "L"), ((1, 1), "|i1"): ("I", "I;8"),
+                      ((1, 1), "<u2"): ("I", "I;16"), ((1, 1), ">u2"): ("I", "I;16B"), ((1, 1), "<i2"): ("I", "I;16S"),
+                      ((1, 1), ">i2"): ("I", "I;16BS"), ((1, 1), "<u4"): ("I", "I;32"), ((1, 1), ">u4"): ("I", "I;32B"),
+                      ((1, 1), "<i4"): ("I", "I;32S"), ((1, 1), ">i4"): ("I", "I;32BS"),
+                      ((1, 1), "<f4"): ("F", "F;32F"), ((1, 1), ">f4"): ("F", "F;32BF"),
+                      ((1, 1), "<f8"): ("F", "F;64F"), ((1, 1), ">f8"): ("F", "F;64BF"),
+                      ((1, 1, 2), "|u1"): ("LA", "LA"), ((1, 1, 3), "|u1"): ("RGB", "RGB"),
+                      ((1, 1, 4), "|u1"): ("RGBA", "RGBA"), ((1, 1), _ENDIAN + "i4"): ("I", "I"),
+                      ((1, 1), _ENDIAN + "f4"): ("F", "F")}
+
 
 # shortcuts
-_fromarray_typemap[((1, 1), _ENDIAN + "i4")] = ("I", "I")
-_fromarray_typemap[((1, 1), _ENDIAN + "f4")] = ("F", "F")
 
 
 def _decompression_bomb_check(size):
@@ -2930,21 +2853,21 @@ def open(fp, mode="r", formats=None):
 
     accept_warnings = []
 
-    def _open_core(fac, file_name, pref, form):
-        for i in form:
+    def _open_core(fp, filename, prefix, formats):
+        for i in formats:
             i = i.upper()
             if i not in OPEN:
                 init()
             try:
                 factory, accept = OPEN[i]
-                result = not accept or accept(pref)
+                result = not accept or accept(prefix)
                 if type(result) in [str, bytes]:
                     accept_warnings.append(result)
                 elif result:
-                    fac.seek(0)
-                    _im = factory(fac, file_name)
-                    _decompression_bomb_check(_im.size)
-                    return _im
+                    fp.seek(0)
+                    im = factory(fp, filename)
+                    _decompression_bomb_check(im.size)
+                    return im
             except (SyntaxError, IndexError, TypeError, struct.error):
                 # Leave disabled by default, spams the logs with image
                 # opening failures that are entirely expected.
@@ -2952,7 +2875,7 @@ def open(fp, mode="r", formats=None):
                 continue
             except BaseException:
                 if exclusive_fp:
-                    fac.close()
+                    fp.close()
                 raise
         return None
 
@@ -3078,76 +3001,76 @@ def merge(mode, bands):
 # Plugin registry
 
 
-def register_open(_id, factory, accept=None):
+def register_open(id, factory, accept=None):
     """
     Register an image file plugin.  This function should not be used
     in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param factory: An image file factory method.
     :param accept: An optional function that can be used to quickly
        reject images having another format.
     """
-    _id = _id.upper()
-    ID.append(_id)
-    OPEN[_id] = factory, accept
+    id = id.upper()
+    ID.append(id)
+    OPEN[id] = factory, accept
 
 
-def register_mime(_id, mimetype):
+def register_mime(id, mimetype):
     """
     Registers an image MIME type.  This function should not be used
     in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param mimetype: The image MIME type for this format.
     """
-    MIME[_id.upper()] = mimetype
+    MIME[id.upper()] = mimetype
 
 
-def register_save(_id, driver):
+def register_save(id, driver):
     """
     Registers an image save function.  This function should not be
     used in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param driver: A function to save images in this format.
     """
-    SAVE[_id.upper()] = driver
+    SAVE[id.upper()] = driver
 
 
-def register_save_all(_id, driver):
+def register_save_all(id, driver):
     """
     Registers an image function to save all the frames
     of a multiframe format.  This function should not be
     used in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param driver: A function to save images in this format.
     """
-    SAVE_ALL[_id.upper()] = driver
+    SAVE_ALL[id.upper()] = driver
 
 
-def register_extension(_id, extension):
+def register_extension(id, extension):
     """
     Registers an image extension.  This function should not be
     used in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param extension: An extension used for this format.
     """
-    EXTENSION[extension.lower()] = _id.upper()
+    EXTENSION[extension.lower()] = id.upper()
 
 
-def register_extensions(_id, extensions):
+def register_extensions(id, extensions):
     """
     Registers image extensions.  This function should not be
     used in application code.
 
-    :param _id: An image format identifier.
+    :param id: An image format identifier.
     :param extensions: A list of extensions used for this format.
     """
     for extension in extensions:
-        register_extension(_id, extension)
+        register_extension(id, extension)
 
 
 def registered_extensions():
@@ -3187,6 +3110,28 @@ def register_encoder(name, encoder):
     """
     ENCODERS[name] = encoder
 
+
+# --------------------------------------------------------------------
+# Simple display support.
+
+
+def _show(**options):
+    options["_internal_pillow"] = True
+    _showxv(**options)
+
+
+def _showxv(**options):
+    if "_internal_pillow" in options:
+        del options["_internal_pillow"]
+    else:
+        warnings.warn(
+            "_showxv is deprecated and will be removed in Pillow 9 (2022-01-02). "
+            "Use Image.show instead.",
+            DeprecationWarning,
+        )
+
+
+# --------------------------------------------------------------------
 # Effects
 
 
@@ -3281,7 +3226,9 @@ class Exif(MutableMapping):
         self._info = None
         self._loaded_exif = None
 
-    def _fixup(self, value):
+    @staticmethod
+    def _fixup(value):
+        # noinspection PyBroadException
         try:
             if len(value) == 1 and isinstance(value, tuple):
                 return value[0]
@@ -3301,12 +3248,7 @@ class Exif(MutableMapping):
             self.fp.seek(offset)
         except (KeyError, TypeError):
             pass
-        else:
-            from . import TiffImagePlugin
 
-            info = TiffImagePlugin.ImageFileDirectory_v2(self.head)
-            info.load(self.fp)
-            return self._fixup_dict(info)
 
     def _get_head(self):
         if self.endian == "<":
@@ -3335,9 +3277,6 @@ class Exif(MutableMapping):
         self.fp = io.BytesIO(data)
         self.head = self.fp.read(8)
         # process dictionary
-        from . import TiffImagePlugin
-
-        self._info = TiffImagePlugin.ImageFileDirectory_v2(self.head)
         self.endian = self._info._endian
         self.fp.seek(self._info.next)
         self._info.load(self.fp)
@@ -3348,14 +3287,12 @@ class Exif(MutableMapping):
         self._ifds.clear()
 
         # process dictionary
-        from . import TiffImagePlugin
 
         self.fp = fp
         if offset is not None:
             self.head = self._get_head()
         else:
             self.head = self.fp.read(8)
-        self._info = TiffImagePlugin.ImageFileDirectory_v2(self.head)
         if self.endian is None:
             self.endian = self._info._endian
         if offset is None:
@@ -3370,6 +3307,7 @@ class Exif(MutableMapping):
         if 0x8769 in self:
             ifd = self._get_ifd_dict(self[0x8769])
             if ifd:
+                # noinspection PyTypeChecker
                 merged_dict.update(ifd)
 
         # GPS
@@ -3378,11 +3316,7 @@ class Exif(MutableMapping):
 
         return merged_dict
 
-    def tobytes(self, offset=8):
-        from . import TiffImagePlugin
-
-        head = self._get_head()
-        ifd = TiffImagePlugin.ImageFileDirectory_v2(ifh=head)
+    def tobytes(self):
         for tag, value in self.items():
             if tag in [0x8769, 0x8225, 0x8825] and not isinstance(value, dict):
                 value = self.get_ifd(tag)
@@ -3393,8 +3327,6 @@ class Exif(MutableMapping):
                 ):
                     value = value.copy()
                     value[0xA005] = self.get_ifd(0xA005)
-            ifd[tag] = value
-        return b"Exif\x00\x00" + head + ifd.tobytes(offset)
 
     def get_ifd(self, tag):
         if tag not in self._ifds:
@@ -3409,8 +3341,6 @@ class Exif(MutableMapping):
                 tag_data = self._ifds[0x8769][tag]
                 if tag == 0x927C:
                     # makernote
-                    from .TiffImagePlugin import ImageFileDirectory_v2
-
                     if tag_data[:8] == b"FUJIFILM":
                         ifd_offset = i32le(tag_data, 8)
                         ifd_data = tag_data[ifd_offset:]
@@ -3420,34 +3350,8 @@ class Exif(MutableMapping):
                             ifd_tag, typ, count, data = struct.unpack(
                                 "<HHL4s", ifd_data[i * 12 + 2: (i + 1) * 12 + 2]
                             )
-                            try:
-                                (
-                                    unit_size,
-                                    handler,
-                                ) = ImageFileDirectory_v2._load_dispatch[typ]
-                            except KeyError:
-                                continue
-                            size = count * unit_size
-                            if size > 4:
-                                (offset,) = struct.unpack("<L", data)
-                                data = ifd_data[offset - 12: offset + size - 12]
-                            else:
-                                data = data[:size]
-
-                            if len(data) != size:
-                                warnings.warn(
-                                    "Possibly corrupt EXIF MakerNote data.  "
-                                    f"Expecting to read {size} bytes but only got "
-                                    f"{len(data)}. Skipping tag {ifd_tag}"
-                                )
-                                continue
-
                             if not data:
                                 continue
-
-                            makernote[ifd_tag] = handler(
-                                ImageFileDirectory_v2(), data, False
-                            )
                         self._ifds[tag] = dict(self._fixup_dict(makernote))
                     elif self.get(0x010F) == "Nintendo":
                         makernote = {}
@@ -3468,16 +3372,7 @@ class Exif(MutableMapping):
 
                                 self.fp.read(4)
                                 camerainfo["InternalSerialNumber"] = self.fp.read(4)
-
                                 self.fp.read(12)
-                                parallax = self.fp.read(4)
-                                handler = ImageFileDirectory_v2._load_dispatch[
-                                    TiffTags.FLOAT
-                                ][1]
-                                camerainfo["Parallax"] = handler(
-                                    ImageFileDirectory_v2(), parallax, False
-                                )
-
                                 self.fp.read(4)
                                 camerainfo["Category"] = self.fp.read(2)
 
@@ -3492,6 +3387,7 @@ class Exif(MutableMapping):
         if self._info is not None:
             # Load all keys into self._data
             for tag in self._info.keys():
+                # noinspection PyStatementEffect
                 self[tag]
 
         return str(self._data)

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -r ~/.config/l-nvidia
+rm -r ~/.local/share/desktop-directories/nvidia.directory
+rm -r ~/.config/menus/applications-merged/nvidia.menu

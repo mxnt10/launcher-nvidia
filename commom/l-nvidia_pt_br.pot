@@ -90,6 +90,9 @@ msgstr "Tema:"
 msgid "Close program to system tray."
 msgstr "Fechar programa para a área de notificação."
 
+msgid "Enable splash screen."
+msgstr "Habilitar tela de splash."
+
 msgid "Default"
 msgstr "Padrão"
 

@@ -1,6 +1,7 @@
-# launcher-nvidia
+# Launcher Nvidia
 
-Program created with the objective of assisting in the execution of Games and programs in Notebooks with Nvidia + Intel in Distributions such as Slackware.
+Program created with the objective of assisting in the execution of Games and programs in Notebooks with Nvidia + Intel
+in Distributions such as Slackware.
 <br><br>
 
 

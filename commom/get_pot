@@ -1,3 +1,0 @@
-#!/bin/bash
-
-python3 pygettext.py -d l-nvidia -o ../locale/l-nvidia.pot ../src/translate.py

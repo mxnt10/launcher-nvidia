@@ -6,23 +6,25 @@ import json as js
 import logging as log
 import os
 
-j_file = "settings.json"
+j_folder = os.path.expanduser('~/.config/l-nvidia')
+j_file = j_folder + '/settings.json'
 
 default_js = {
     "Language": "Default",
-    "SysTray": "False"
+    "SysTray": "False",
+    "Splash": "False"
 }
 
-
 # Check if exist settings.json, else file as create
-def check_json():
-    try:
-        with open(j_file):
-            pass
-    except Exception as msg:
-        log.warning("\033[33m %s. \033[32mCreate a settings.json ...", msg)
-        with open(j_file, 'w') as jf:
-            js.dump(default_js, jf, indent=2)
+try:
+    with open(j_file):
+        pass
+except Exception as msg:
+    log.warning("\033[33m %s. \033[32mCreate a settings.json ...", msg)
+    if not os.path.isdir(j_folder):
+        os.makedirs(j_folder)
+    with open(j_file, 'w') as jfile:
+        js.dump(default_js, jfile, indent=2)
 
 
 # Set value of the json file
@@ -50,3 +52,11 @@ def enable_tray(var):
         write_json('SysTray', 'True')
     else:
         write_json('SysTray', 'False')
+
+
+# Enable or disable splash options
+def enable_splash(var):
+    if var.get() == 1:
+        write_json('Splash', 'True')
+    else:
+        write_json('Splash', 'False')

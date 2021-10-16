@@ -33,11 +33,15 @@ def preferencies(main):
 
     # Set variables
     set_tray = tk.IntVar()
+    set_splash = tk.IntVar()
     set_lang = [t.DEFAULT, t.PORTUGUESE]
     set_theme = [t.DEFAULT]
 
+    # Check enabled options
     if st.set_json('SysTray') == 'True':
         set_tray.set(1)
+    if st.set_json('Splash') == 'True':
+        set_splash.set(1)
 
     # Config Interface
     pref_app = tk.Toplevel()
@@ -79,6 +83,11 @@ def preferencies(main):
     check_tray = tk.Checkbutton(pref_app, text=t.SYSTRAY_TXT, variable=set_tray,
                                 onvalue=1, offvalue=0, command=lambda: st.enable_tray(set_tray))
     check_tray.place(x=10, y=120)
+
+    # Checkbutton for splash screen
+    check_tray = tk.Checkbutton(pref_app, text=t.SPLASH_TXT, variable=set_splash,
+                                onvalue=1, offvalue=0, command=lambda: st.enable_splash(set_splash))
+    check_tray.place(x=10, y=150)
 
     # Button Close
     closebutton = tk.Button(pref_app, text=t.CLOSE, command=lambda: ut.close_win(pref_app))

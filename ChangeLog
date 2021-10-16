@@ -3,43 +3,71 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.4 ] - 2021-10-16 #############################################
+
+### Added / Adicionado
+    - Added splash screen support.
+###
+
+### Changed / Modificado
+ - Source:
+    - messagebox in bold.
+    - Clean internal modules.
+ - Files:
+    - Modify get_mo for get_mo_pt_br for translate in pt_br
+    - Modify get_pot for get_pot_pt_br for translate in pt_br
+###
+
+### Removed / Removido
+    - Removed settings in src.
+###
+
+### Fixed / Corrigido
+    - settings.json is created in ~/.config/l-nvidia, avoiding
+      permission errors.
+    - The programs list has been sorted.
+###
+
+#####################################################################
+
+
 ## [ 1.3 ] - 2021-10-12 #############################################
 
 ### Added / Adicionado
  - Code:
-	- Added translation support.
-	- Added options for systray.
-	- Added Preferences in menu.
+    - Added translation support.
+    - Added options for systray.
+    - Added Preferences in menu.
  - Sources:
-	- Added sources version.py, settings.py and translate.py
-	- Added source messagebox.py, fork in the tkinter module
-	  messagebox. 
-	- Included and changed modules for tray icon support.
+    - Added sources version.py, settings.py and translate.py
+    - Added source messagebox.py, fork in the tkinter module
+      messagebox.
+    - Included and changed modules for tray icon support.
  - Directory:
-	- Included tools files in commom directoties.
-	- included locale folder for generate a .pot, .po and .mo files
-	  for program translation.
+    - Included tools files in commom directoties.
+    - included locale folder for generate a .pot, .po and .mo files
+      for program translation.
 ###
 
 ### Changed / Modificado
  - Code:
-	- Changed update verification.
-	- Changed methods for close application.
+    - Changed update verification.
+    - Changed methods for close application.
  - Sources:
-	- Rename source menubar_help.py to help.py
-	- Rename source menubar_options.py to options.py
-	- Use internal module messagebox for show messages in
-	  the application.
+    - Rename source menubar_help.py to help.py
+    - Rename source menubar_options.py to options.py
+    - Use internal module messagebox for show messages in
+      the application.
  - Directory:
-	- Rename images to appdata.
-	- Rename tools to utils.
+    - Rename images to appdata.
+    - Rename tools to utils.
 ###
 
 ### Fixed / Corrigido
-	- Fixed attributes for tkinter.
-	- Fixed About window for not minimize.
-	- Fixed Preferences window for not minimize.
-	- Messages not as necessary minimize. 
+    - Fixed attributes for tkinter.
+    - Fixed About window for not minimize.
+    - Fixed Preferences window for not minimize.
+    - Messages not as necessary minimize.
 ###
 
 #####################################################################
@@ -48,11 +76,11 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ## [ 1.2 ] - 2021-10-09 #############################################
 
 ### Added / Adicionado
-	- Menu options with submenu reset list for update program list.
+    - Menu options with submenu reset list for update program list.
 ###
 
 ### Changed / Modificado
-	- No view version in Title.
+    - No view version in Title.
 ###
 
 
@@ -62,12 +90,12 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ## [ 1.1 ] - 2021-10-09 #############################################
 
 ### Changed / Modificado
-	- install.sh
-	- Desktop file.
+    - install.sh
+    - Desktop file.
 ###
 
 ### Fixed / Corrigido
-	- Fix update verification.
+    - Fix update verification.
 ###
 
 #####################################################################
@@ -76,13 +104,13 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ## [ 1.0 ] - 2021-10-08 #############################################
 
 ### Added / Adicionado
-	- Add Desktop file in images.
-	- Add icon in images.
-	- Add tools for update desktop database and create menu Nvidia
-	  in Start Menu.
-	- Add sources.
-	- Add script in profile.
-	- Add install.sh
+    - Add Desktop file in images.
+    - Add icon in images.
+    - Add tools for update desktop database and create menu Nvidia
+      in Start Menu.
+    - Add sources.
+    - Add script in profile.
+    - Add install.sh
 ###
 
 #####################################################################

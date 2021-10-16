@@ -185,6 +185,7 @@ class ImageFile(Image.Image):
         if use_mmap:
             # try memory mapping
             decoder_name, extents, offset, args = self.tile[0]
+            # noinspection PyProtectedMember
             if (
                 decoder_name == "raw"
                 and len(args) >= 3
@@ -206,6 +207,7 @@ class ImageFile(Image.Image):
                     if self.palette:
                         self.palette.dirty = 1
                 except (AttributeError, OSError, ImportError):
+                    # noinspection PyAttributeOutsideInit
                     self.map = None
 
         self.load_prepare()
@@ -215,12 +217,12 @@ class ImageFile(Image.Image):
             self.tile.sort(key=_tilesort)
 
             try:
-                # FIX: This is a hack to handle TIFF's JpegTables tag.
                 prefix = self.tile_prefix
             except AttributeError:
                 prefix = b""
 
             for decoder_name, extents, offset, args in self.tile:
+                # noinspection PyProtectedMember
                 decoder = Image._getdecoder(
                     self.mode, decoder_name, args, self.decoderconfig
                 )
@@ -381,7 +383,7 @@ class Parser:
                 # skip header
                 skip = min(len(self.data), self.offset)
                 self.data = self.data[skip:]
-                self.offset = self.offset - skip
+                self.offset -= skip
                 if self.offset > 0 or not self.data:
                     return
 
@@ -420,12 +422,14 @@ class Parser:
                 flag = hasattr(im, "load_seek") or hasattr(im, "load_read")
                 if flag or len(im.tile) != 1:
                     # custom load code, or multiple tiles
+                    # noinspection PyAttributeOutsideInit
                     self.decode = None
                 else:
                     # initialize decoder
                     im.load_prepare()
                     d, e, o, a = im.tile[0]
                     im.tile = []
+                    # noinspection PyProtectedMember
                     self.decoder = Image._getdecoder(im.mode, d, a, im.decoderconfig)
                     self.decoder.setimage(im.im, e)
 
@@ -488,7 +492,6 @@ def _save(im, fp, tile, bufsize=0):
     if not hasattr(im, "encoderconfig"):
         im.encoderconfig = ()
     tile.sort(key=_tilesort)
-    # FIX: make MAXBLOCK a configuration parameter
     # It would be great if we could have the encoder specify what it needs
     # But, it would need at least the image size in most cases. RawEncode is
     # a tricky case.
@@ -506,6 +509,7 @@ def _save(im, fp, tile, bufsize=0):
     except (AttributeError, io.UnsupportedOperation) as exc:
         # compress to Python file-compatible object
         for e, b, o, a in tile:
+            # noinspection PyProtectedMember
             e = Image._getencoder(im.mode, e, a, im.encoderconfig)
             if o > 0:
                 fp.seek(o)
@@ -525,6 +529,7 @@ def _save(im, fp, tile, bufsize=0):
     else:
         # slight speedup: compress to real file object
         for e, b, o, a in tile:
+            # noinspection PyProtectedMember
             e = Image._getencoder(im.mode, e, a, im.encoderconfig)
             if o > 0:
                 fp.seek(o)
@@ -608,6 +613,7 @@ class PyDecoder:
         :param args: Array of args items from the tile entry
         :returns: None
         """
+        # noinspection PyAttributeOutsideInit
         self.args = args
 
     @property
@@ -689,6 +695,7 @@ class PyDecoder:
 
         if not rawmode:
             rawmode = self.mode
+        # noinspection PyProtectedMember
         d = Image._getdecoder(self.mode, "raw", rawmode)
         d.setimage(self.im, self.state.extents())
         s = d.decode(data)

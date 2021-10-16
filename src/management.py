@@ -17,7 +17,6 @@ import utils as ut
 
 l_folder = os.path.expanduser('~/.local/share/applications')
 
-
 # Start menu update
 def update_start_menu():
     print("\033[36mUpdate desktop files in start menu.\033[m")
@@ -59,13 +58,16 @@ def search_replace(file, replace):
 
 # Search desktop files optimized to run with Nvidia driver
 def populate_list(lst):
+    sort_lst = []
     # Mapping desktop files in folder
     for root, subdir, files in os.walk(l_folder):
         for file in files:
             local = os.path.join(os.path.realpath(root), file)
             if ut.search_word(local, 'LIBGL_ALWAYS_SOFTWARE=1'):
                 print("\033[32mFound: \033[33m" + local + "\033[m")
-                lst.insert(END, search_replace(local, ""))
+                sort_lst.append(search_replace(local, ""))
+    for i in sorted(sort_lst):
+        lst.insert(END, i)
 
 
 # Optimizations for desktop files

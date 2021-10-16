@@ -48,6 +48,7 @@ def invert(image):
     """
 
     image.load()
+    # noinspection PyProtectedMember
     return image._new(image.im.chop_invert())
 
 
@@ -65,6 +66,7 @@ def lighter(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_lighter(image2.im))
 
 
@@ -82,6 +84,7 @@ def darker(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_darker(image2.im))
 
 
@@ -99,6 +102,7 @@ def difference(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_difference(image2.im))
 
 
@@ -118,6 +122,7 @@ def multiply(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_multiply(image2.im))
 
 
@@ -134,6 +139,7 @@ def screen(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_screen(image2.im))
 
 
@@ -146,6 +152,7 @@ def soft_light(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_soft_light(image2.im))
 
 
@@ -158,6 +165,7 @@ def hard_light(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_hard_light(image2.im))
 
 
@@ -170,10 +178,11 @@ def overlay(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_overlay(image2.im))
 
 
-def add(image1, image2, scale=1.0, offset=0):
+def add(image1, image2, scale=1.0, ofset=0):
     """
     Adds two images, dividing the result by scale and adding the
     offset. If omitted, scale defaults to 1.0, and offset to 0.0.
@@ -187,10 +196,11 @@ def add(image1, image2, scale=1.0, offset=0):
 
     image1.load()
     image2.load()
-    return image1._new(image1.im.chop_add(image2.im, scale, offset))
+    # noinspection PyProtectedMember
+    return image1._new(image1.im.chop_add(image2.im, scale, ofset))
 
 
-def subtract(image1, image2, scale=1.0, offset=0):
+def subtract(image1, image2, scale=1.0, ofset=0):
     """
     Subtracts two images, dividing the result by scale and adding the offset.
     If omitted, scale defaults to 1.0, and offset to 0.0.
@@ -204,7 +214,8 @@ def subtract(image1, image2, scale=1.0, offset=0):
 
     image1.load()
     image2.load()
-    return image1._new(image1.im.chop_subtract(image2.im, scale, offset))
+    # noinspection PyProtectedMember
+    return image1._new(image1.im.chop_subtract(image2.im, scale, ofset))
 
 
 def add_modulo(image1, image2):
@@ -219,6 +230,7 @@ def add_modulo(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_add_modulo(image2.im))
 
 
@@ -234,6 +246,7 @@ def subtract_modulo(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_subtract_modulo(image2.im))
 
 
@@ -254,6 +267,7 @@ def logical_and(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_and(image2.im))
 
 
@@ -271,6 +285,7 @@ def logical_or(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_or(image2.im))
 
 
@@ -288,6 +303,7 @@ def logical_xor(image1, image2):
 
     image1.load()
     image2.load()
+    # noinspection PyProtectedMember
     return image1._new(image1.im.chop_xor(image2.im))
 
 
@@ -311,6 +327,7 @@ def composite(image1, image2, mask):
     return Image.composite(image1, image2, mask)
 
 
+# noinspection PyIncorrectDocstring
 def offset(image, xoffset, yoffset=None):
     """Returns a copy of the image where data has been offset by the given
     distances. Data wraps around the edges. If ``yoffset`` is omitted, it
@@ -325,4 +342,5 @@ def offset(image, xoffset, yoffset=None):
     if yoffset is None:
         yoffset = xoffset
     image.load()
+    # noinspection PyProtectedMember
     return image._new(image.im.offset(xoffset, yoffset))

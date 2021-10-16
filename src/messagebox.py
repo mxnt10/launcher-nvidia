@@ -33,11 +33,11 @@ def message(win, title, img, txt):
 
     # Label logo
     logo = tk.Label(frame, image=img)
-    logo.grid(row=0, column=0, pady=(10, 10), padx=(10, 10))
+    logo.grid(row=0, column=0, pady=(10, 10), padx=(20, 10))
 
     # Insert text
-    text = tk.Label(frame, text=txt)
-    text.grid(row=0, column=1, pady=(10, 10), padx=(10, 20))
+    text = tk.Label(frame, text=txt, font='-weight bold -size 10')
+    text.grid(row=0, column=1, pady=(10, 10), padx=(10, 30))
 
     # Create button
     button = tk.Button(msg, text="OK", command=msg.destroy, width=10)

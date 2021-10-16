@@ -394,7 +394,7 @@ class PngStream(ChunkStream):
         if comp_method != 0:
             raise SyntaxError(f"Unknown compression method {comp_method} in iCCP chunk")
         try:
-            icc_profile = _safe_zlib_decompress(s[i + 2 :])
+            icc_profile = _safe_zlib_decompress(s[i + 2:])
         except ValueError:
             if ImageFile.LOAD_TRUNCATED_IMAGES:
                 icc_profile = None
@@ -410,6 +410,7 @@ class PngStream(ChunkStream):
         # image header
         s = ImageFile._safe_read(self.fp, length)
         self.im_size = i32(s, 0), i32(s, 4)
+        # noinspection PyBroadException
         try:
             self.im_mode, self.im_rawmode = _MODES[(s[8], s[9])]
         except Exception:
@@ -750,6 +751,7 @@ class PngImageFile(ImageFile.ImageFile):
                 self.seek(self.n_frames - 1)
             self.load()
             if self.is_animated:
+                # noinspection PyUnboundLocalVariable
                 self.seek(frame)
         return self._text
 
@@ -950,6 +952,7 @@ class PngImageFile(ImageFile.ImageFile):
                 logger.debug("%r %s %s (unknown)", cid, pos, length)
                 s = ImageFile._safe_read(self.fp, length)
                 if cid[1:2].islower():
+                    # noinspection PyTypeChecker
                     self.private_chunks.append((cid, s, True))
         self._text = self.png.im_text
         if not self.is_animated:
@@ -1282,6 +1285,7 @@ def _save(im, fp, filename, chunk=putchunk, save_all=False):
                     chunk(fp, cid, data)
 
     if im.mode == "P":
+        # noinspection PyUnboundLocalVariable
         palette_byte_number = colors * 3
         palette_bytes = im.im.getpalette("RGB")[:palette_byte_number]
         while len(palette_bytes) < palette_byte_number:
@@ -1338,7 +1342,7 @@ def _save(im, fp, filename, chunk=putchunk, save_all=False):
     exif = im.encoderinfo.get("exif", im.info.get("exif"))
     if exif:
         if isinstance(exif, Image.Exif):
-            exif = exif.tobytes(8)
+            exif = exif.tobytes()
         if exif.startswith(b"Exif\x00\x00"):
             exif = exif[6:]
         chunk(fp, b"eXIf", exif)
@@ -1379,10 +1383,10 @@ def getchunks(im, **params):
         def append(self, chunk):
             self.data.append(chunk)
 
-    def append(fpp, cid, *data):
+    def append(fp, cid, *data):
         data = b"".join(data)
         crc = o32(_crc32(data, _crc32(cid)))
-        fpp.append((cid, data, crc))
+        fp.append((cid, data, crc))
 
     fp = collector()
 

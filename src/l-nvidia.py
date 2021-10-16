@@ -1,18 +1,16 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# splash
-# root.overrideredirect(1)
-
 # Import modules
 import importlib as imp
 import logging as log
 import tkinter as tk
+import tkinter.font
 
 # Import internal modules
 import pystray
 from pystray import MenuItem as Men
-from PIL import Image
+from PIL import Image, ImageTk
 
 # Import sources
 import help as hl
@@ -21,28 +19,59 @@ import options as op
 import settings as st
 import translate as t
 import utils as ut
+import version as v
+
+tray_st = False
 
 
 # Exit Program
 def stop_app(win):
     ut.close_win(win)
     if st.set_json('SysTray') == 'False':
-        # noinspection PyBroadException
-        try:
-            stop_icon()
-        except Exception:
-            pass
+        stop_icon()
 
 
 # Restart applications for apply settings
 def restart_program(win):
     stop_app(win)
     imp.reload(t)  # Necessary for aply translation in restart program
-    launcher_nvidia()
+    launcher_nvidia(False)
+
+
+# Splash for application
+def splash_show():
+    # Config splash interface
+    splash_app = tk.Tk()
+    splash_app.geometry('570x270')
+    splash_app.overrideredirect(True)
+    splash_app.config(bg='#4b984f')
+    ut.center(splash_app)
+
+    # Responsive frame for programs
+    label_frame = tk.Frame(splash_app)
+    label_frame.place(relx=0.01, rely=0.02, relwidth=0.98, relheight=0.96)
+
+    # View logo in splash
+    img = ImageTk.PhotoImage(Image.open(ut.set_icon()))
+    logo = tk.Label(label_frame, image=img)
+    logo.grid(row=0, column=0)
+
+    # Label for logo in splash
+    font_size = tk.font.Font(size=26)
+    label = tk.Label(label_frame, text='Launcher NVIDIA    \nv' + str(v.__version__) + '\t\t', font=font_size)
+    label.grid(row=0, column=1)
+
+    # Time for view splash, open splash
+    splash_app.after(1500, lambda: launcher_nvidia(splash_app))
+    splash_app.mainloop()
 
 
 # Main interface
-def launcher_nvidia():
+def launcher_nvidia(win):
+    # Necessary for close splash
+    if win:
+        win.destroy()
+
     # Config interface
     main_app = tk.Tk()
     main_app.minsize(600, 400)
@@ -89,6 +118,7 @@ def launcher_nvidia():
     # Listbox for list programs
     listbox = tk.Listbox(label_frame)
     listbox.place(relx=0.01, rely=0.01, relwidth=0.7, relheight=0.96)
+    listbox.config(font='-weight bold -size 10')
     mg.populate_list(listbox)
 
     # Label select
@@ -121,25 +151,30 @@ def launcher_nvidia():
 # Stop icon for quit application.
 def stop_icon():
     print("\033[30;42mQuit application!\033[m")
-    icon.stop()
+    if tray_st:
+        icon.stop()
 
 
 # Open main interface
 if __name__ == '__main__':
     print("\033[30;42mStart application!\033[m")
-    st.check_json()
-    launcher_nvidia()
-
+    # For splash screen support
+    splash = st.set_json('Splash')
+    if splash == 'True':
+        splash_show()
+    else:
+        launcher_nvidia(False)
     # Icon support
-    control = st.set_json('SysTray')
-    if control == 'True':
+    tray = st.set_json('SysTray')
+    if tray == 'True':
         i_tray = ut.set_icon()
         if i_tray is not None:
             image = Image.open(i_tray)
-            menu = (Men(t.OPEN, launcher_nvidia), Men(t.QUIT, stop_icon))
+            menu = (Men(t.OPEN, lambda: launcher_nvidia(False)), Men(t.QUIT, stop_icon))
             icon = pystray.Icon('Launcher Nvidia', image, 'Launcher Nvidia', menu)
             print("\033[30;42mStart icon!\033[m")
             # Open or close application using icon in systray.
+            tray_st = True
             icon.run()
         else:
             log.warning("\033[33mIgnore start systray, icon not found.\033[m")
