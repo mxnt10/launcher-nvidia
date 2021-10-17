@@ -1,11 +1,17 @@
 # Launcher Nvidia
 
-Program created with the objective of assisting in the execution of Games and programs in Notebooks with Nvidia + Intel
-in Distributions such as Slackware.
+Program created with the objective of assisting in the execution of Games and programs<br>
+in Notebooks with Nvidia + Intel in Distributions such as Slackware.
 <br><br>
 
+### Required packages:
 
-## Install
+- python >= 3.6
+- python-pillow >= 8.3.1
+- python-requests >= 2.25.1
+<br><br>
+
+### Installation instructions:
 
 To install "Launcher Nvidia" , use the following commands:
 ```sh

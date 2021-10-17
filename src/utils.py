@@ -4,7 +4,6 @@
 # Import modules
 import logging as log
 
-
 # Search word in text file.
 def search_word(file, txt):
     with open(file, 'r', encoding='utf8') as a:
@@ -18,7 +17,7 @@ def search_word(file, txt):
 # Close interface
 def close_win(win):
     # :param win: the main window or Toplevel window to close
-    print("\033[34mClosing interface!\033[m")
+    log.info("\033[34m Closing interface!\033[m")
     win.destroy()
 
 
@@ -31,13 +30,13 @@ def set_icon():
         with open(icon):
             return icon
     except Exception as msg:
-        log.warning("\033[33m%s.\033[32m Use a local icon...\033[m", msg)
+        log.warning("\033[33m %s.\033[32m Use a local icon...\033[m", msg)
         try:
             with open(l_icon):
                 return l_icon
         except Exception as msg:
             # Exception for icon not found
-            log.error("\033[31m%s\033[m", msg)
+            log.error("\033[31m %s \033[m", msg)
             return None
 
 
@@ -69,10 +68,3 @@ def center(win):
     # This seems to draw the window frame immediately, so only call deiconify()
     # after setting correct window position
     win.deiconify()
-
-
-# View info in terminal
-def info_log(msg):
-    logg = log.getLogger('root')
-    logg.setLevel(log.INFO)
-    logg.info('\033[32m %s \033[m', msg)

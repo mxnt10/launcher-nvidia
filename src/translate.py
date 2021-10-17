@@ -24,14 +24,14 @@ def set_locale(op):
         with open(ck, 'r'):
             return local
     except Exception as msg:
-        log.warning("\033[33m%s.\033[32m Use a local file...\033[m", msg)
+        log.warning("\033[33m %s.\033[32m Use a local file...\033[m", msg)
         try:
             ck = l_local + file
             with open(ck, 'r'):
                 return l_local
         except Exception as msg:
             # Exception for file not found
-            log.error("\033[31m%s\033[m", msg)
+            log.error("\033[31m %s \033[m", msg)
             return None
 
 

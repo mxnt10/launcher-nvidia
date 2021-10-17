@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# import thinter modules
+# import modules
+import logging as log
 import tkinter as tk
 from tkinter import END, ttk
 
@@ -94,7 +95,7 @@ def preferencies(main):
     closebutton.place(relx=0.58, rely=0.94, width=160, height=30)
 
     # Open Interface
-    print("\033[36mPreferencies open successful.\033[m")
+    log.info("\033[36m Preferencies open successful.\033[m")
     pref_app.attributes('-alpha', 1.0)
     pref_app.protocol("WM_DELETE_WINDOW", lambda: ut.close_win(pref_app))
     pref_app.bind("<Unmap>", on_unmap)  # For not minimize configuration window

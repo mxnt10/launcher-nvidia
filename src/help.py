@@ -15,7 +15,7 @@ import version as v
 
 # Check Updates Function
 def check_for_updates(win):
-    print("\033[33mChecking updates...\033[m")
+    log.info("\033[33mChecking updates...\033[m")
     try:
         res = rq.get('https://raw.githubusercontent.com/mxnt10/launcher-nvidia/master/RELEASE')
         if res.status_code != 200:
@@ -23,14 +23,14 @@ def check_for_updates(win):
 
         new_ver = res.text.split("\n")
         if new_ver[0] == str(v.__version__):
-            print("\033[32mProgram already updated.\033[m")
+            log.info("\033[32m Program already updated.\033[m")
             msgbox.showinfo(win, t.UPDATED, t.UP_ALREADY)
         else:
-            print("\033[32mUpdate available: \033[31m" + str(new_ver[0]) + "\033[m")
+            log.warning("\033[32m Update available\033[31m %s \033[m", str(new_ver[0]))
             msgbox.showwarn(win, t.IMPORTANT, t.UP_AVALIABLE + ': ' + str(new_ver[0]) + '!')
 
     except ValueError as msg:
-        log.error("\033[33mUpdate check failed. \033[31m%s \033[m", msg)
+        log.error("\033[33m Update check failed.\033[31m %s \033[m", msg)
         msgbox.showerror(win, t.ERROR, t.UP_FAIL)
 
 
@@ -70,7 +70,7 @@ def about(win):
     closebutton.place(relx=0.58, rely=0.82, width=160, height=30)
 
     # Open Interface
-    print("\033[36mAbout open successful.\033[m")
+    log.info("\033[36m About open successful.\033[m")
     help_app.attributes('-alpha', 1.0)
     help_app.protocol("WM_DELETE_WINDOW", lambda: ut.close_win(help_app))
     help_app.bind("<Unmap>", on_unmap)  # For not minimize about window

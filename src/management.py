@@ -8,10 +8,11 @@ import shutil as st
 import os
 
 # Import tkinter modules
-from tkinter import messagebox, END, ANCHOR
+from tkinter import END, ANCHOR
 from tkinter.filedialog import askopenfilename
 
 # Import source
+import messagebox as msgbox
 import translate as t
 import utils as ut
 
@@ -19,7 +20,7 @@ l_folder = os.path.expanduser('~/.local/share/applications')
 
 # Start menu update
 def update_start_menu():
-    print("\033[36mUpdate desktop files in start menu.\033[m")
+    log.info("\033[36m Update desktop files in start menu.\033[m")
     desk_file_update = '/usr/share/l-nvidia/utils/desktop_file_update'
     l_desk_file_update = '../utils/desktop_file_update'
 
@@ -27,13 +28,13 @@ def update_start_menu():
         with open(desk_file_update, 'r'):
             sh.call(desk_file_update, shell=True)
     except Exception as msg:
-        log.warning("\033[33m%s.\033[32m Use a local file...\033[m", msg)
+        log.warning("\033[33m %s.\033[32m Use a local file...\033[m", msg)
         sh.call(l_desk_file_update, shell=True)
 
 
 # Create Nvidia categories in start menu
 def create_nvidia_categories():
-    print("\033[36mVerify if categories Nvidea as created.\033[m")
+    log.info("\033[36m Verify if categories Nvidea as created.\033[m")
     nvidia_menu = '/usr/share/l-nvidia/utils/nvidia_menu'
     l_nvidia_menu = '../utils/nvidia_menu'
 
@@ -41,7 +42,7 @@ def create_nvidia_categories():
         with open(nvidia_menu, 'r'):
             sh.call(nvidia_menu, shell=True)
     except Exception as msg:
-        log.warning("\033[33m%s.\033[32m Use a local file...\033[m", msg)
+        log.warning("\033[33m %s.\033[32m Use a local file...\033[m", msg)
         sh.call(l_nvidia_menu, shell=True)
     update_start_menu()  # Update necessary
 
@@ -50,9 +51,10 @@ def create_nvidia_categories():
 def search_replace(file, replace):
     with open(file, 'r', encoding='utf8') as f:
         for line in f:
-            if 'Name=' in line:
-                # Return case "Name=" word as found
-                return line.replace('Name=', replace).strip('\n')
+            if not 'GenericName=' in line:
+                if 'Name=' in line:
+                    # Return case "Name=" word as found
+                    return line.replace('Name=', replace).strip('\n')
     return None
 
 
@@ -64,7 +66,7 @@ def populate_list(lst):
         for file in files:
             local = os.path.join(os.path.realpath(root), file)
             if ut.search_word(local, 'LIBGL_ALWAYS_SOFTWARE=1'):
-                print("\033[32mFound: \033[33m" + local + "\033[m")
+                log.info("\033[32m Found \'\033[33m%s\033[32m\'.\033[m", local)
                 sort_lst.append(search_replace(local, ""))
     for i in sorted(sort_lst):
         lst.insert(END, i)
@@ -124,47 +126,54 @@ def launch(lab, lst):
         text = 'Name=' + lst.get(ANCHOR) + "\n"
         command = extract_command(text)
         if not command:
-            raise Exception('Command not selected!')
-        print("\033[32mRunning: \033[36m" + command + "\033[m")
-        sh.call(command, shell=True)
+            raise Exception('Program not selected!')
+        log.info("\033[32m Running\033[36m %s \033[m", command)
+        sh.call(command + ' &', shell=True)
     except Exception as msg:
-        ut.info_log(msg)
+        log.info('\033[32m %s \033[m', msg)
 
 
 # Function for add button
-def add_desktop(lst):
+def add_desktop(win, lst):
     desktop_file = askopenfilename(title=t.ASK_OPEN, initialdir='/usr/share/applications',
                                    filetypes=((t.DESK_FILE, "*.desktop"),))
 
     try:
         if not desktop_file:
             raise ValueError("File not selected!")
-        print("\033[32mFound: \033[33m" + desktop_file + "\033[m")
+        log.info("\033[32m Found \'\033[33m%s\033[32m\'.\033[m", desktop_file)
         new_file = os.path.join(l_folder, os.path.basename(desktop_file))
 
         if not os.path.isfile(new_file):
             create_nvidia(desktop_file, new_file)
-            print("\033[32mMove: \033[33m" + new_file + "\033[m")
+            log.info("\033[32m Move \'\033[33m%s\033[32m\'.\033[m", new_file)
             lst.insert(END, search_replace(desktop_file, ''))
             start_menu(os.path.basename(desktop_file), 'add')
             update_start_menu()
         else:
-            print("\033[31mThe program is already on the list!\033[m")
-            messagebox.showinfo(title=t.INFO, message=t.MSG_INFO)
+            log.warning("\033[33m The program is already on the list!\033[m")
+            msgbox.showinfo(win, t.INFO, t.MSG_INFO)
 
     except ValueError as msg:
-        ut.info_log(msg)
+        log.info('\033[32m %s \033[m', msg)
 
 
 # Function for remove button
 def remove(lst):
-    text = 'Name=' + lst.get(ANCHOR) + "\n"
-    for root, subdir, files in os.walk(l_folder):
-        for file in files:
-            local = os.path.join(os.path.realpath(root), file)
-            if ut.search_word(local, text):
-                os.remove(local)
-                print("\033[31mRemove: \033[34m" + local + "\033[m")
-                lst.delete(ANCHOR)
-                start_menu(os.path.basename(local), 'rm')
-                update_start_menu()
+    try:
+        if not lst.get(ANCHOR):
+            raise ValueError("Program not selected!")
+        text = 'Name=' + lst.get(ANCHOR) + "\n"
+
+        for root, subdir, files in os.walk(l_folder):
+            for file in files:
+                local = os.path.join(os.path.realpath(root), file)
+                if ut.search_word(local, text):
+                    os.remove(local)
+                    log.info("\033[31m Remove \'\033[33m%s\033[31m\'.\033[m", local)
+                    lst.delete(ANCHOR)
+                    start_menu(os.path.basename(local), 'rm')
+                    update_start_menu()
+
+    except ValueError as msg:
+        log.info("\033[32m %s \033[m", msg)

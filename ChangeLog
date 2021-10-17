@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 
+## [ 1.5 ] - 2021-10-17 #############################################
+
+### Changed / Modificado
+    - Replace print to log.info.
+###
+
+### Removed / Removido
+    - Removed pillow in src, install as a dependency.
+###
+
+### Fixed / Corrigido
+    - Fix messagebox in "Add file from desktop".
+    - View log info in terminal.
+    - Run program without preventing the program from running.
+    - Fix search program name.
+###
+
+#####################################################################
+
+
 ## [ 1.4 ] - 2021-10-16 #############################################
 
 ### Added / Adicionado

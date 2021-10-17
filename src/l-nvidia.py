@@ -3,13 +3,18 @@
 
 # Import modules
 import importlib as imp
-import logging as log
-import tkinter as tk
-import tkinter.font
 
-# Import internal modules
-import pystray
-from pystray import MenuItem as Men
+# Define attributes for logging
+import logging as log
+log.basicConfig(level=log.INFO)
+log.root.name = ''
+
+# Import tkinter modules
+import tkinter as tk
+from tkinter import font
+
+# Import tray modules
+from pystray import Icon, MenuItem
 from PIL import Image, ImageTk
 
 # Import sources
@@ -21,6 +26,7 @@ import translate as t
 import utils as ut
 import version as v
 
+# Variables
 tray_st = False
 
 
@@ -33,7 +39,8 @@ def stop_app(win):
 
 # Restart applications for apply settings
 def restart_program(win):
-    stop_app(win)
+    print("\033[30;42m Restart application! \033[m")
+    ut.close_win(win)
     imp.reload(t)  # Necessary for aply translation in restart program
     launcher_nvidia(False)
 
@@ -57,7 +64,7 @@ def splash_show():
     logo.grid(row=0, column=0)
 
     # Label for logo in splash
-    font_size = tk.font.Font(size=26)
+    font_size = font.Font(size=26)
     label = tk.Label(label_frame, text='Launcher NVIDIA    \nv' + str(v.__version__) + '\t\t', font=font_size)
     label.grid(row=0, column=1)
 
@@ -90,7 +97,7 @@ def launcher_nvidia(win):
 
     # General menu
     menu_program = tk.Menu(menu_bar, tearoff=0)
-    menu_program.add_command(label=t.ADD_DESK, command=lambda: mg.add_desktop(listbox))
+    menu_program.add_command(label=t.ADD_DESK, command=lambda: mg.add_desktop(main_app, listbox))
     menu_program.add_command(label=t.UP_LIST, command=lambda: op.update_list(listbox))
     menu_program.add_command(label=t.EXIT, command=lambda: stop_app(main_app))
     menu_bar.add_cascade(label=t.GENERAL, menu=menu_program)
@@ -132,7 +139,7 @@ def launcher_nvidia(win):
     addbutton.place(relx=0.72, rely=0.01, width=150, height=30)
 
     # Add button
-    addbutton = tk.Button(button_frame, text=t.ADD, command=lambda: mg.add_desktop(listbox))
+    addbutton = tk.Button(button_frame, text=t.ADD, command=lambda: mg.add_desktop(main_app, listbox))
     addbutton.place(x=0, y=5, width=200, height=30)
 
     # Remove button
@@ -140,7 +147,7 @@ def launcher_nvidia(win):
     rembutton.place(x=210, y=5, width=200, height=30)
 
     # Open interface
-    print("\033[36mWelcome! Interface open successful.\033[m")
+    log.info("\033[36m Welcome! Interface open successful.\033[m")
     mg.create_nvidia_categories()
     main_app.config(menu=menu_bar)
     main_app.attributes('-alpha', 1.0)
@@ -150,14 +157,14 @@ def launcher_nvidia(win):
 
 # Stop icon for quit application.
 def stop_icon():
-    print("\033[30;42mQuit application!\033[m")
+    print("\033[30;42m Quit application! \033[m")
     if tray_st:
         icon.stop()
 
 
 # Open main interface
 if __name__ == '__main__':
-    print("\033[30;42mStart application!\033[m")
+    print("\033[30;42m Start application! \033[m")
     # For splash screen support
     splash = st.set_json('Splash')
     if splash == 'True':
@@ -170,11 +177,11 @@ if __name__ == '__main__':
         i_tray = ut.set_icon()
         if i_tray is not None:
             image = Image.open(i_tray)
-            menu = (Men(t.OPEN, lambda: launcher_nvidia(False)), Men(t.QUIT, stop_icon))
-            icon = pystray.Icon('Launcher Nvidia', image, 'Launcher Nvidia', menu)
-            print("\033[30;42mStart icon!\033[m")
+            menu = (MenuItem(t.OPEN, lambda: launcher_nvidia(False)), MenuItem(t.QUIT, stop_icon))
+            icon = Icon('Launcher Nvidia', image, 'Launcher Nvidia', menu)
+            print("\033[30;42m Start icon! \033[m")
             # Open or close application using icon in systray.
             tray_st = True
             icon.run()
         else:
-            log.warning("\033[33mIgnore start systray, icon not found.\033[m")
+            log.warning("\033[33m Ignore start systray, icon not found.\033[m")

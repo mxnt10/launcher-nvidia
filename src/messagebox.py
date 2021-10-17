@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Import modules
+# Import tkinter module
 import tkinter as tk
 
 # Import source
@@ -48,15 +48,18 @@ def message(win, title, img, txt):
     msg.bind("<Unmap>", on_unmap)  # For not minimize message dialog
     msg.mainloop()
 
+
 # Dialog for information
 def showinfo(win, title, text):
     image = '::tk::icons::information'
     message(win, title, image, text)
 
+
 # Dialog for warning
 def showwarn(win, title, text):
     image = '::tk::icons::warning'
     message(win, title, image, text)
+
 
 # Dialog for error
 def showerror(win, title, text):

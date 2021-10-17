@@ -13,17 +13,17 @@ menu_file=$menu_dir/nvidia.menu
 # Verify if exist directories
 
 [ ! -d "$local_dir" ] && {
-  echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $local_dir not found! \e[32mCreate directory $local_dir \e[m"
+  echo -e "SHELLWARN:: \e[33mDirectory $local_dir not found! \e[32mCreate directory $local_dir \e[m"
   mkdir -p $local_dir
 }
 
 [ ! -d "$desk_dir"  ] && {
-  echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $desk_dir not found! \e[32mCreate directory $desk_dir \e[m"
+  echo -e "SHELLWARN:: \e[33mDirectory $desk_dir not found! \e[32mCreate directory $desk_dir \e[m"
   mkdir -p $desk_dir
 }
 
 [ ! -d "$menu_dir"  ] && {
-  echo -e "\e[31mWARNING:${0##*/}: \e[33mDirectory $menu_dir not found! \e[32mCreate directory $menu_dir \e[m"
+  echo -e "SHELLWARN:: \e[33mDirectory $menu_dir not found! \e[32mCreate directory $menu_dir \e[m"
   mkdir -p $menu_dir
 }
 
@@ -31,7 +31,7 @@ menu_file=$menu_dir/nvidia.menu
 # Create nvidia.directory
 
 [ ! -f "$desk_file" ] && {
-  echo -e "\e[32mCreate file $desk_file \e[m"
+  echo -e "SHELL:: \e[32mCreate file $desk_file \e[m"
   echo "[Desktop Entry]
 Version=1.0
 Type=Directory
@@ -43,7 +43,7 @@ Icon=l-nvidia" > $desk_file
 # Create nvidia.menu
 
 [ ! -f "$menu_file" ] && {
-  echo -e "\e[32mCreate file $menu_file \e[m"
+  echo -e "SHELL:: \e[32mCreate file $menu_file \e[m"
   echo '<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
     "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
 <!-- Do not edit manually - generated and managed by xdg-desktop-menu -->
